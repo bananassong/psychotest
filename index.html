@@ -3,28 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>나의 통제광 테스트</title>
+    <title>나의 통제광 레벨 테스트</title>
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg: #f8fafc;
-            --card-bg: #ffffff;
-            --text: #1e293b;
-            --text-light: #64748b;
-            --border: #e2e8f0;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #f43f5e;
+            --primary-hover: #e11d48;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border: #334155;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI', 'Apple SD Gothic Neo', 'Noto Sans KR', 'Malgun Gothic', sans-serif;
+            font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, system-ui, Roboto, sans-serif;
         }
 
         body {
-            background-color: var(--bg);
-            color: var(--text);
+            background-color: var(--bg-color);
+            color: var(--text-main);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -36,32 +36,45 @@
             width: 100%;
             max-width: 600px;
             background: var(--card-bg);
-            border-radius: 20px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
             padding: 40px;
-            transition: all 0.3s ease;
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 6px;
+            background: linear-gradient(90deg, #f43f5e, #fb7185, #fda4af);
         }
 
         h1 {
-            font-size: 1.75rem;
+            font-size: 1.8rem;
             text-align: center;
-            margin-bottom: 10px;
-            color: var(--text);
+            margin-bottom: 12px;
+            color: var(--text-main);
+            letter-spacing: -0.5px;
         }
 
         .subtitle {
             text-align: center;
-            color: var(--text-light);
-            font-size: 0.95rem;
-            margin-bottom: 30px;
+            color: var(--text-sub);
+            font-size: 1rem;
+            margin-bottom: 35px;
         }
 
         .progress-bar {
             width: 100%;
-            height: 8px;
+            height: 6px;
             background: var(--border);
-            border-radius: 4px;
-            margin-bottom: 30px;
+            border-radius: 3px;
+            margin-bottom: 35px;
             overflow: hidden;
         }
 
@@ -73,35 +86,37 @@
         }
 
         .question-box {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             font-weight: 600;
-            margin-bottom: 25px;
-            line-height: 1.5;
+            margin-bottom: 30px;
+            line-height: 1.6;
             text-align: center;
+            word-break: keep-all;
         }
 
         .options {
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
         }
 
         .option-btn {
-            background: var(--card-bg);
+            background: #111827;
             border: 2px solid var(--border);
-            border-radius: 12px;
-            padding: 16px 20px;
+            border-radius: 14px;
+            padding: 18px 20px;
             font-size: 1rem;
             text-align: left;
             cursor: pointer;
             transition: all 0.2s ease;
-            color: var(--text);
+            color: var(--text-main);
             font-weight: 500;
+            line-height: 1.4;
         }
 
         .option-btn:hover {
             border-color: var(--primary);
-            background: #fdfdff;
+            background: #1f2937;
             transform: translateY(-2px);
         }
 
@@ -111,37 +126,44 @@
         }
 
         .result-title {
-            font-size: 1.5rem;
-            color: var(--primary);
-            margin-bottom: 15px;
+            font-size: 1.6rem;
+            color: #fb7185;
+            margin-bottom: 20px;
             font-weight: 700;
+            word-break: keep-all;
         }
 
         .result-desc {
             font-size: 1.05rem;
-            line-height: 1.6;
-            color: var(--text-light);
-            margin-bottom: 30px;
-            background: var(--bg);
-            padding: 20px;
-            border-radius: 12px;
+            line-height: 1.7;
+            color: var(--text-sub);
+            margin-bottom: 35px;
+            background: #111827;
+            padding: 24px;
+            border-radius: 14px;
             text-align: left;
+            border: 1px solid var(--border);
         }
 
         .restart-btn {
             background: var(--primary);
             color: white;
             border: none;
-            border-radius: 12px;
-            padding: 14px 28px;
-            font-size: 1rem;
+            border-radius: 14px;
+            padding: 16px 32px;
+            font-size: 1.05rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background 0.2s ease;
+            transition: background 0.2s ease, transform 0.1s ease;
+            width: 100%;
         }
 
         .restart-btn:hover {
             background: var(--primary-hover);
+        }
+
+        .restart-btn:active {
+            transform: scale(0.98);
         }
     </style>
 </head>
@@ -150,8 +172,8 @@
     <div class="container">
         <!-- 테스트 진행 화면 -->
         <div id="quiz-screen">
-            <h1>🧠 나의 통제광 레벨 테스트</h1>
-            <p class="subtitle">피도 눈물도 없는 일상 속 통제 성향을 알아보세요!</p>
+            <h1>🔥 나의 통제광 레벨 테스트</h1>
+            <p class="subtitle">내 안의 숨겨진 '피도 눈물도 없는 통제 본능'은 몇 %일까?</p>
             
             <div class="progress-bar">
                 <div class="progress" id="progress"></div>
@@ -172,7 +194,7 @@
             <div class="result-desc" id="result-desc">
                 결과 설명이 여기에 들어갑니다.
             </div>
-            <button class="restart-btn" onclick="restartQuiz()">다시 테스트하기</button>
+            <button class="restart-btn" onclick="restartQuiz()">테스트 다시 하기</button>
         </div>
     </div>
 
@@ -254,7 +276,7 @@
                 q: "스마트폰 알림 아이콘(빨간색 배지)이나 카톡 안 읽은 숫자를 보면?",
                 options: [
                     { text: "1. 쌓여있든 말든 별로 신경 쓰지 않는다.", score: 1 },
-                    { text: "2. 거슬릴 때 가끔 모아서 정리한다.", score: 5 },
+                    { text: "2. 거슬릴 때 가끔 모아서 정리한다.", score: 3 },
                     { text: "3. 무조건 들어가서 숫자를 \"0\"으로 만들어야 직성이 풀린다.", score: 5 }
                 ]
             },
@@ -331,6 +353,7 @@
 
         function loadQuestion() {
             const q = questions[currentQuestion];
+            questionText.innerText = `${currentession = currentQuestion + 1}. ${q.q}`; // 수정
             questionText.innerText = `${currentQuestion + 1}. ${q.q}`;
             optionsContainer.innerHTML = '';
 
@@ -370,7 +393,7 @@
                 }
             }
 
-            resultTitle.innerText = `당신의 결과: ${matchedResult.title}`;
+            resultTitle.innerText = `👑 ${matchedResult.title}`;
             resultDesc.innerText = matchedResult.desc;
         }
 
