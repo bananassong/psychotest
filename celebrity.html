@@ -1,1 +1,86 @@
 
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내가 남자 연예인이라면 누구?</title>
+    <style>
+        :root {
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --primary: #f43f5e;
+            --text-main: #f8fafc;
+            --text-sub: #94a3b8;
+            --border: #334155;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { width: 100%; max-width: 600px; background: var(--card-bg); border-radius: 24px; padding: 40px; border: 1px solid var(--border); }
+        .option-btn { background: #111827; border: 2px solid var(--border); border-radius: 14px; padding: 18px 20px; margin: 10px 0; width: 100%; text-align: left; cursor: pointer; color: white; transition: 0.2s; }
+        .option-btn:hover { border-color: var(--primary); background: #1f2937; }
+        .result-box { display: none; text-align: center; }
+        .restart-btn { background: var(--primary); color: white; border: none; border-radius: 14px; padding: 16px 32px; margin-top: 20px; cursor: pointer; width: 100%; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quiz-screen">
+            <h1 style="text-align:center; margin-bottom:30px;">남자 연예인 테스트</h1>
+            <div id="question-text" style="font-size:1.2rem; margin-bottom:20px; text-align:center;">문항 로딩중...</div>
+            <div id="options-container"></div>
+        </div>
+        <div class="result-box" id="result-screen">
+            <h2 id="result-title" style="color:#fb7185; margin-bottom:20px;"></h2>
+            <p id="result-desc" style="background:#111827; padding:20px; border-radius:10px;"></p>
+            <button class="restart-btn" onclick="location.href='index.html'">메인으로</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { q: "친구들과 여행 갈 때 나의 포지션은?", options: [
+                { text: "1. 계획 다 짜놓고 인솔하는 리더형", type: "유재석" },
+                { text: "2. 그냥 멍하니 있다가 한 마디 던지는 관찰자형", type: "침착맨" },
+                { text: "3. 맛집은 내가 다 찾아! 정보왕", type: "곽튜브" },
+                { text: "4. 오늘 패션은 내가 제일 힙해! 패피형", type: "큐영" },
+                { text: "5. 일단 다 맡겨봐, 무조건 재밌게 해줄게!", type: "정일영" },
+                { text: "6. 조용히 웃음 포인트만 노리는 은둔형 고수", type: "기안84" }
+            ]}
+        ];
+
+        const results = {
+            "유재석": { title: "🎤 국민 MC 유재석", desc: "철저한 자기관리와 배려심! 어디서든 환영받는 완벽한 리더 재질입니다." },
+            "침착맨": { title: "🎨 엉뚱한 천재 침착맨", desc: "남 눈치 안 보는 마이웨이! 던지는 한마디마다 빵빵 터지는 웃음 사냥꾼입니다." },
+            "곽튜브": { title: "🌍 친근한 모험가 곽튜브", desc: "어디서든 잘 적응하는 생존왕! 인간미 넘치고 솔직해서 인기가 많아요." },
+            "큐영": { title: "✨ 트렌디 패피 큐영", desc: "나만의 확고한 스타일! 힙한 감각으로 어딜 가나 주목받는 트렌드세터입니다." },
+            "정일영": { title: "🔥 열정 만렙 정일영", desc: "에너지가 넘치는 불도저! 일을 맡기면 200% 해내는 스마트한 매력남입니다." },
+            "기안84": { title: "⚡ 자유로운 영혼 기안84", desc: "꾸밈없는 모습이 매력! 아무도 예상 못 하는 엉뚱함으로 사람들을 매료시킵니다." }
+        };
+
+        let currentQ = 0; let choiceCounts = {};
+        function loadQ() {
+            if (currentQ >= questions.length) { showResult(); return; }
+            const q = questions[currentQ];
+            document.getElementById('question-text').innerText = q.q;
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.text;
+                btn.onclick = () => { choiceCounts[opt.type] = (choiceCounts[opt.type] || 0) + 1; currentQ++; loadQ(); };
+                container.appendChild(btn);
+            });
+        }
+        function showResult() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            let bestType = Object.keys(results)[Math.floor(Math.random()*6)];
+            document.getElementById('result-title').innerText = results[bestType].title;
+            document.getElementById('result-desc').innerText = results[bestType].desc;
+        }
+        loadQ();
+    </script>
+</body>
+</html>
