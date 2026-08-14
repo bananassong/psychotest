@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>내가 여자 연예인이라면?</title>
+    <title>내가 연예인이라면? (여자편)</title>
     <style>
         :root {
             --bg-color: #fff5f7;
@@ -16,23 +16,25 @@
         }
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { width: 100%; max-width: 500px; background: var(--card-bg); border-radius: 30px; padding: 40px 25px; border: 2px solid var(--border); box-shadow: 0 10px 30px rgba(255, 182, 193, 0.3); }
-        h1 { color: var(--primary); text-align: center; font-size: 1.5rem; margin-bottom: 25px; }
+        .container { width: 100%; max-width: 600px; background: var(--card-bg); border-radius: 30px; padding: 40px; border: 2px solid var(--border); box-shadow: 0 10px 30px rgba(255, 182, 193, 0.3); }
+        .progress-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
+        .progress { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s ease; }
         .question-box { font-size: 1.15rem; font-weight: 700; margin-bottom: 25px; text-align: center; line-height: 1.5; color: var(--text-main); }
-        .option-btn { background: #fff; border: 2px solid #ffccd5; border-radius: 20px; padding: 18px 20px; margin-bottom: 12px; width: 100%; text-align: left; cursor: pointer; color: var(--text-main); font-weight: 600; transition: 0.2s; }
+        .option-btn { background: #fff; border: 2px solid #ffccd5; border-radius: 20px; padding: 16px 20px; margin-bottom: 12px; width: 100%; text-align: left; cursor: pointer; color: var(--text-main); font-weight: 600; transition: 0.2s; font-size: 1rem; }
         .option-btn:hover { border-color: var(--primary); background: var(--primary); color: white; transform: translateY(-2px); }
         .result-box { display: none; text-align: center; }
-        .result-title { color: var(--primary); font-size: 1.4rem; font-weight: 800; margin-bottom: 15px; }
-        .result-desc { background: #fff5f7; padding: 20px; border-radius: 20px; text-align: left; line-height: 1.7; color: var(--text-sub); border: 1px solid var(--border); margin-bottom: 25px; }
-        .restart-btn { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 16px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.2s; }
+        .result-title { color: var(--primary); font-size: 1.6rem; font-weight: 800; margin-bottom: 15px; }
+        .result-desc { background: #fff5f7; padding: 25px; border-radius: 20px; text-align: left; line-height: 1.7; color: var(--text-sub); border: 1px solid var(--border); margin-bottom: 25px; }
+        .restart-btn { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 16px; font-weight: 700; cursor: pointer; width: 100%; font-size: 1.1rem; transition: 0.2s; }
         .restart-btn:hover { background: var(--primary-hover); }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="quiz-screen">
-            <h1>✨ 내가 여자 연예인이라면?</h1>
-            <div id="question-text" class="question-box">문항 로딩중...</div>
+            <h1 style="text-align:center; margin-bottom:20px; font-size:1.4rem; color:var(--primary);">💖 내가 여자 연예인이라면?</h1>
+            <div class="progress-bar"><div class="progress" id="progress"></div></div>
+            <div class="question-box" id="question-text">문항 로딩중...</div>
             <div id="options-container"></div>
         </div>
         <div class="result-box" id="result-screen">
@@ -44,13 +46,95 @@
 
     <script>
         const questions = [
-            { q: "친구들과 모임에서 나의 모습은?", options: [
-                { text: "1. 분위기 메이커! 웃음 폭탄 투하", type: "풍자" },
-                { text: "2. 센스 있게 상황 정리하고 리드함", type: "주현영" },
-                { text: "3. 조용하지만 확실한 존재감, 스타일 담당", type: "제니" },
-                { text: "4. 차분하게 대화에 귀 기울여줌", type: "아이유" },
-                { text: "5. 리액션 최고! 사랑둥이 모드", type: "박보영" },
-                { text: "6. 가끔 엉뚱한 말로 다들 빵 터뜨림", type: "안은진" }
+            { q: "친구들과 주말 모임 장소를 고를 때 나의 의견은?", options: [
+                {t: "1. 요즘 SNS에서 제일 핫하고 트렌디한 맛집으로 가자!", v: "제니"},
+                {t: "2. 무조건 맛이 검증되었고 배 터지게 먹을 수 있는 곳으로!", v: "풍자"},
+                {t: "3. 다들 오기 편하고 대중교통 좋은 곳으로 센스 있게 조율함", v: "주현영"},
+                {t: "4. 조용하고 분위기 있어서 대화하기 좋은 아늑한 카페", v: "아이유"}
+            ]},
+            { q: "단체 대화방(단톡방)에서 나의 평소 모습은?", options: [
+                {t: "1. 짤이나 웃긴 영상으로 단톡방 분위기를 쥐락펴락함", v: "풍자"},
+                {t: "2. 눈치 빠르게 상황 파악하고 일정 조율이나 총무 역할을 도맡음", v: "주현영"},
+                {t: "3. 읽씹하거나 가끔 툭 감성적인 한 마디 던짐", v: "아이유"},
+                {t: "4. 다들 떠드는 거 조용히 관전하다가 엉뚱한 타이밍에 빵 터짐", v: "안은진"}
+            ]},
+            { q: "새로운 도전을 하거나 무언가를 배울 때 나는?", options: [
+                {t: "1. 남들이 안 하는 독보적이고 유니크한 분야를 파고듦", v: "제니"},
+                {t: "2. 조용히 혼자서 깊이 있게 파고들며 나만의 세계를 만듦", v: "아이유"},
+                {t: "3. 주변 사람들의 응원과 따뜻한 공감을 받으며 차근차근 도전함", v: "박보영"},
+                {t: "4. 에라 모르겠다 일단 부딪혀보면서 몸으로 익힘", v: "안은진"}
+            ]},
+            { q: "누군가 나에게 서운하게 하거나 섭섭한 말을 했을 때?", options: [
+                {t: "1. 참지 않고 화끈하고 시원하게 내 입장을 직설적으로 털어놓음", v: "풍자"},
+                {t: "2. 속으로는 엄청 신경 쓰이고 곱씹지만 겉으로는 웃어넘김", v: "박보영"},
+                {t: "3. 조용히 혼자만의 시간을 가지며 마음의 상처를 치유함", v: "아이유"},
+                {t: "4. '얘가 왜 이러지?' 하고 엉뚱하게 혼자 상황 분석함", v: "안은진"}
+            ]},
+            { q: "친구가 갑자기 인생 상담을 요청하며 털어놓을 때 나는?", options: [
+                {t: "1. 뼈 때리는 현실 조언과 함께 속 시원한 해결책을 내려줌", v: "풍자"},
+                {t: "2. 찰지게 몰입해 주며 내 일처럼 공감하고 같이 분노해 줌", v: "주현영"},
+                {t: "3. 차분하게 말을 들어주며 깊은 위로와 울림을 주는 조언을 함", v: "아이유"},
+                {t: "4. 따뜻하게 꼭 안아주며 무조건적인 내 편이 되어줌", v: "박보영"}
+            ]},
+            { q: "내 방이나 옷장을 열어봤을 때 풍기는 분위기는?", options: [
+                {t: "1. 최신 트렌드 아이템과 힙한 소품들로 가득 채워져 있음", v: "제니"},
+                {t: "2. 나만의 감성과 취향이 담긴 책과 아기자기한 소품들", v: "아이유"},
+                {t: "3. 깔끔하고 포근하며 뽀송한 힐링 공간 느낌", v: "박보영"},
+                {t: "4. 편한 게 최고! 실용성 위주로 자연스럽게 늘어져 있음", v: "안은진"}
+            ]},
+            { q: "사람들이 모인 자리에서 갑자기 나에게 스포트라이트가 비칠 때?", options: [
+                {t: "1. 당황하지 않고 여유롭고 시크한 아우라로 시선을 즐김", v: "제니"},
+                {t: "2. 화려한 입담과 예능감으로 사람들을 배꼽 잡게 만듦", v: "풍자"},
+                {t: "3. 얼굴이 빨개지면서 어쩔 줄 몰라 하지만 특유의 사랑스러움으로 무마함", v: "박보영"},
+                {t: "4. 엉뚱한 표정을 지으며 주변 사람들을 웃게 만듦", v: "안은진"}
+            ]},
+            { q: "주말에 혼자 집에서 시간을 보낼 때 가장 좋아하는 것은?", options: [
+                {t: "1. 넷플릭스 신작이나 세상 힙한 유튜브 콘텐츠 정주행", v: "제니"},
+                {t: "2. 배달 앱 켜놓고 맛있는 거 먹으면서 예능 보기", v: "풍자"},
+                {t: "3. 조용히 음악 들으면서 일기 쓰거나 사색에 잠기기", v: "아이유"},
+                {t: "4. 이불 속에서 뒹굴거리며 멍 때리다가 낮잠 자기", v: "안은진"}
+            ]},
+            { q: "사회생활이나 학교에서 눈치백단 센스를 발휘해야 할 때?", options: [
+                {t: "1. 상사나 상대방의 성향을 정확히 파악하고 칼같이 대처함", v: "주현영"},
+                {t: "2. 특유의 친화력과 화끈한 입담으로 다 아우러버림", v: "풍자"},
+                {t: "3. 튀지 않게 조용히 제 몫을 다하며 평화를 유지함", v: "아이유"},
+                {t: "4. 러블리한 미소로 사람들을 무장해제시킴", v: "박보영"}
+            ]},
+            { q: "내 인생을 관통하는 가장 중요한 모토나 가치는?", options: [
+                {t: "1. 남 눈치 보지 않고 당당하게 나만의 길을 가는 것", v: "제니"},
+                {t: "2. 후회 없이 화끈하게 놀고 유쾌하게 사는 것", v: "풍자"},
+                {t: "3. 내면의 깊이를 단단하게 다지고 소중한 사람들을 지키는 것", v: "아이유"},
+                {t: "4. 맑고 순수한 마음으로 웃음을 잃지 않는 것", v: "안은진"}
+            ]},
+            { q: "쇼핑을 할 때 나의 장바구니 1순위 아이템은?", options: [
+                {t: "1. 요즘 유행하는 힙한 브랜드의 의류나 악세사리", v: "제니"},
+                {t: "2. 후기 평점 완벽한 존맛탱 디저트나 맛집 밀키트", v: "풍자"},
+                {t: "3. 방 안 분위기를 따뜻하게 만들어 줄 힐링 소품", v: "박보영"},
+                {t: "4. 쓸데없지만 왠지 귀여워서 꽂힌 엉뚱한 굿즈", v: "안은진"}
+            ]},
+            { q: "여행을 떠났을 때 내가 가장 중요하게 생각하는 포인트는?", options: [
+                {t: "1. 인생샷 수백 장 건질 수 있는 핫플레이스 방문", v: "제니"},
+                {t: "2. 그 지역 현지 로컬 맛집 투어는 절대 놓칠 수 없음", v: "풍자"},
+                {t: "3. 복잡한 도시를 벗어나 조용히 자연을 즐기며 힐링하기", v: "아이유"},
+                {t: "4. 계획 없이 발길 닿는 대로 돌아다니다 우연한 행운 만나기", v: "안은진"}
+            ]},
+            { q: "친구가 내게 "너 오늘 좀 달라 보인다?"라고 말했을 때 나의 생각은?", options: [
+                {t: "1. \"역시 오늘 코디랑 핏이 완벽했어\" 하며 내심 뿌듯해함", v: "제니"},
+                {t: "2. \"어제 야식 먹어서 얼굴 부었나?\" 하고 화들짝 놀람", v: "풍자"},
+                {t: "3. \"내가 무슨 실수를 했나?\" 하고 혼자 진지하게 고민함", v: "주현영"},
+                {t: "4. \"뭐지? 신기하다\" 하고 대수롭지 않게 넘김", v: "안은진"}
+            ]},
+            { q: "대화를 하다가 분위기가 갑자기 싸해졌을 때 대처법은?", options: [
+                {t: "1. 센스 있는 농담이나 리액션으로 분위기를 순식간에 살려냄", v: "주현영"},
+                {t: "2. 화끈하게 목소리 키워서 웃음 터뜨리는 드립을 던짐", v: "풍자"},
+                {t: "3. 따뜻한 미소를 지으며 상대방의 어깨를 토닥여줌", v: "박보영"},
+                {t: "4. 아무렇지도 않게 엉뚱한 소리로 사람들을 당황하게 만듦", v: "안은진"}
+            ]},
+            { q: "오늘 하루 일과를 끝내고 침대에 누웠을 때 내 머릿속을 스치는 생각은?", options: [
+                {t: "1. \"오늘 하루도 나 참 멋지게 잘 살았다\" 하며 셀프 칭찬", v: "제니"},
+                {t: "2. \"내일은 또 뭐 맛있는 거 먹지?\" 하는 행복한 고민", v: "풍자"},
+                {t: "3. \"오늘 그 대화에서 내가 실수는 안 했겠지?\" 하는 과몰입", v: "주현영"},
+                {t: "4. \"오늘 하늘 참 예뻤는데\" 하며 잔잔한 감성에 젖음", v: "아이유"}
             ]}
         ];
 
@@ -58,33 +142,51 @@
             "풍자": { title: "👄 입담 만렙 토크 퀸 (풍자 재질)", desc: "화끈하고 시원시원한 성격! 센스 있는 입담과 재치로 사람들을 배꼽 잡게 만드는 타고난 예능캐입니다." },
             "주현영": { title: "💼 센스 만점 인턴 (주현영 재질)", desc: "눈치 빠르고 센스 넘치며, 사회생활 100단 만렙인 스마트 캐릭터! 과몰입 장인으로 주변 사람들에게 늘 큰 웃음을 줍니다." },
             "제니": { title: "🔥 워너비 트렌드세터 (제니 재질)", desc: "독보적인 아우라와 스타일을 가진 이 시대의 아이콘! 뭘 하든 화제가 되는 대체 불가한 매력의 소유자입니다." },
-            "아이유": { title: "🌙 감성 가득 차분함 (아이유 재질)", desc: "조용하고 내성적이지만, 누구보다 속이 깊고 자기만의 세계가 확실합니다. 주변 사람을 위로할 줄 아는 깊은 울림의 소유자예요." },
+            "아이유": { title: "🌙 감성 가득 차분함 (아이유 재질)", desc: "조용하고 내성적이지만, 누구보다 속이 깊고 자기만의 세계가 확실합니다. 주변 사람을 위로할 줄 아이 깊은 울림의 소유자예요." },
             "박보영": { title: "🌸 사랑스러운 공감 요정 (박보영 재질)", desc: "조심스럽고 내향적인 성격이지만, 특유의 러블리함과 따뜻한 공감 능력으로 모두의 마음을 무장해제시키는 힐링형 캐릭터입니다." },
             "안은진": { title: "🍃 엉뚱한 매력의 관찰자 (안은진 재질)", desc: "평소엔 조용히 사람들을 관찰하지만, 한 번씩 던지는 엉뚱한 멘트가 매력 포인트! 순수하고 맑은 에너지로 주위를 편안하게 만듭니다." }
         };
 
-        let currentQ = 0; let choiceCounts = {};
+        let currentQ = 0;
+        let scores = { "풍자": 0, "주현영": 0, "제니": 0, "아이유": 0, "박보영": 0, "안은진": 0 };
+
         function loadQ() {
-            if (currentQ >= questions.length) { showResult(); return; }
-            const q = questions[currentQ];
-            document.getElementById('question-text').innerText = q.q;
+            if (currentQ >= questions.length) {
+                showResult();
+                return;
+            }
+            let progressPercent = (currentQ / questions.length) * 100;
+            document.getElementById('progress').style.width = progressPercent + '%';
+
+            const qObj = questions[currentQ];
+            document.getElementById('question-text').innerText = (currentQ + 1) + ". " + qObj.q;
+            
             const container = document.getElementById('options-container');
             container.innerHTML = '';
-            q.options.forEach(opt => {
+            
+            qObj.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
-                btn.innerText = opt.text;
-                btn.onclick = () => { choiceCounts[opt.type] = (choiceCounts[opt.type] || 0) + 1; currentQ++; loadQ(); };
+                btn.innerText = opt.t;
+                btn.onclick = () => {
+                    scores[opt.v]++;
+                    currentQ++;
+                    loadQ();
+                };
                 container.appendChild(btn);
             });
         }
+
         function showResult() {
             document.getElementById('quiz-screen').style.display = 'none';
             document.getElementById('result-screen').style.display = 'block';
-            let bestType = Object.keys(results)[Math.floor(Math.random()*6)];
+
+            let bestType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+
             document.getElementById('result-title').innerText = results[bestType].title;
             document.getElementById('result-desc').innerText = results[bestType].desc;
         }
+
         loadQ();
     </script>
 </body>
