@@ -181,7 +181,10 @@
             document.getElementById('quiz-screen').style.display = 'none';
             document.getElementById('result-screen').style.display = 'block';
 
-            let bestType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+            // 최고점 계산 로직 수정 (동점자 발생 시 랜덤 추출을 통해 모든 인물이 공평하게 결과로 나오도록 개선)
+            let maxScore = Math.max(...Object.values(scores));
+            let topCandidates = Object.keys(scores).filter(key => scores[key] === maxScore);
+            let bestType = topCandidates[Math.floor(Math.random() * topCandidates.length)];
 
             document.getElementById('result-title').innerText = results[bestType].title;
             document.getElementById('result-desc').innerText = results[bestType].desc;
