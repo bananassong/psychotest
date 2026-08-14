@@ -2,70 +2,192 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>여자 연예인 성향 테스트</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내가 연예인이라면? (여자편)</title>
     <style>
-        body { background-color: #fff5f7; font-family: sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .container { width: 90%; max-width: 450px; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .progress { width: 100%; height: 6px; background: #eee; border-radius: 3px; margin-bottom: 20px; }
-        .bar { width: 0%; height: 100%; background: #ff6b81; border-radius: 3px; transition: 0.3s; }
-        .q-box { font-size: 1.1rem; font-weight: bold; margin-bottom: 20px; text-align: center; }
-        .btn { width: 100%; padding: 14px; margin-bottom: 10px; border: 1px solid #ffccd5; border-radius: 12px; background: white; cursor: pointer; font-size: 0.95rem; }
-        .btn:hover { background: #ff6b81; color: white; }
-        #result { display: none; text-align: center; }
+        :root {
+            --bg-color: #fff5f7;
+            --card-bg: #ffffff;
+            --primary: #ff6b81;
+            --primary-hover: #ff4757;
+            --text-main: #2d3436;
+            --text-sub: #636e72;
+            --border: #ffe4e6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { width: 100%; max-width: 600px; background: var(--card-bg); border-radius: 30px; padding: 40px; border: 2px solid var(--border); box-shadow: 0 10px 30px rgba(255, 182, 193, 0.3); }
+        .progress-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
+        .progress { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s ease; }
+        .question-box { font-size: 1.15rem; font-weight: 700; margin-bottom: 25px; text-align: center; line-height: 1.5; color: var(--text-main); }
+        .option-btn { background: #fff; border: 2px solid #ffccd5; border-radius: 20px; padding: 16px 20px; margin-bottom: 12px; width: 100%; text-align: left; cursor: pointer; color: var(--text-main); font-weight: 600; transition: 0.2s; font-size: 1rem; }
+        .option-btn:hover { border-color: var(--primary); background: var(--primary); color: white; transform: translateY(-2px); }
+        .result-box { display: none; text-align: center; }
+        .result-title { color: var(--primary); font-size: 1.6rem; font-weight: 800; margin-bottom: 15px; }
+        .result-desc { background: #fff5f7; padding: 25px; border-radius: 20px; text-align: left; line-height: 1.7; color: var(--text-sub); border: 1px solid var(--border); margin-bottom: 25px; }
+        .restart-btn { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 16px; font-weight: 700; cursor: pointer; width: 100%; font-size: 1.1rem; transition: 0.2s; }
+        .restart-btn:hover { background: var(--primary-hover); }
     </style>
 </head>
 <body>
     <div class="container">
-        <div id="quiz">
-            <div class="progress"><div id="bar" class="bar"></div></div>
-            <div id="q-text" class="q-box"></div>
-            <div id="btns"></div>
+        <div id="quiz-screen">
+            <h1 style="text-align:center; margin-bottom:20px; font-size:1.4rem; color:var(--primary);">💖 내가 여자 연예인이라면?</h1>
+            <div class="progress-bar"><div class="progress" id="progress"></div></div>
+            <div class="question-box" id="question-text">문항 로딩중...</div>
+            <div id="options-container"></div>
         </div>
-        <div id="result">
-            <h2 id="res-title"></h2>
-            <p id="res-desc"></p>
-            <button class="btn" onclick="location.reload()">다시하기</button>
+        <div class="result-box" id="result-screen">
+            <h2 id="result-title" class="result-title"></h2>
+            <div id="result-desc" class="result-desc"></div>
+            <button class="restart-btn" onclick="location.href='index.html'">메인으로 돌아가기</button>
         </div>
     </div>
+
     <script>
-        const qList = [
-            {q: "약속 취소! 나의 첫 반응은?", opt: [{t:"오히려 좋아, 넷플릭스",v:"제니"}, {t:"당장 다른 약속 찾기",v:"이효리"}, {t:"혼자 맛집 투어",v:"수지"}, {t:"생산적인 집안일",v:"아이유"}]},
-            {q: "해외여행 포지션은?", opt: [{t:"인생샷 포토그래퍼",v:"제니"}, {t:"분위기 메이커 대장",v:"이효리"}, {t:"일정 조율 실속파",v:"수지"}, {t:"완벽 계획 브레인",v:"아이유"}]},
-            {q: "누군가 어이없는 실수를 하면?", opt: [{t:"신경 안 쓰고 내 할 일",v:"제니"}, {t:"쿨하게 웃어넘기기",v:"이효리"}, {t:"부드럽게 화제 전환",v:"수지"}, {t:"차분히 문제 짚어주기",v:"아이유"}]},
-            {q: "일/과제 처리 스타일은?", opt: [{t:"집중력 폭발, 몰아서 끝냄",v:"제니"}, {t:"흐름대로 유연하게",v:"이효리"}, {t:"꼼꼼하고 차분하게",v:"수지"}, {t:"마감 전 완벽 끝내기",v:"아이유"}]},
-            {q: "첫 만남 자리에서 나는?", opt: [{t:"힙한 아우라로 시선집중",v:"제니"}, {t:"솔직 털털한 입담",v:"이효리"}, {t:"조용히 경청하기",v:"수지"}, {t:"예의 바른 역할 수행",v:"아이유"}]},
-            {q: "이유 없는 잔소리 대처는?", opt: [{t:"표정 관리하며 수용",v:"제니"}, {t:"한 귀로 듣고 흘리기",v:"이효리"}, {t:"지혜롭게 받아치기",v:"수지"}, {t:"논리적 반박 생각",v:"아이유"}]},
-            {q: "폰 정리 상태는?", opt: [{t:"감성 배경, 예쁜 배열",v:"제니"}, {t:"안 읽은 톡 999+개",v:"이효리"}, {t:"깔끔한 대화방 정리",v:"수지"}, {t:"폴더별 완벽 칼각",v:"아이유"}]},
-            {q: "로또 1등 당첨된다면?", opt: [{t:"멋진 패션 아이템 지름",v:"제니"}, {t:"주변에 통 크게 쓰기",v:"이효리"}, {t:"평소처럼 조용히 저축",v:"수지"}, {t:"차분한 미래 설계",v:"아이유"}]},
-            {q: "가장 중요한 가치는?", opt: [{t:"나만의 유니크함",v:"제니"}, {t:"온전한 나의 자유",v:"이효리"}, {t:"주변을 지키는 따뜻함",v:"수지"}, {t:"끊임없는 성취감",v:"아이유"}]},
-            {q: "잘못 나온 메뉴 대처는?", opt: [{t:"그냥 주는 대로 먹음",v:"제니"}, {t:"웃으며 교체 요청",v:"이효리"}, {t:"정중히 재요청",v:"수지"}, {t:"영수증 확인 후 요청",v:"아이유"}]},
-            {q: "멘탈 바닥일 때 극복법은?", opt: [{t:"친구와 맛있는 수다",v:"제니"}, {t:"자연 속으로 떠나기",v:"이효리"}, {t:"따뜻한 차 마시며 명상",v:"수지"}, {t:"일기 쓰며 생각 정리",v:"아이유"}]},
-            {q: "듣고 싶은 칭찬은?", opt: [{t:"대체 불가능한 매력",v:"제니"}, {t:"같이 있으면 편안해",v:"이효리"}, {t:"마음이 깊은 사람",v:"수지"}, {t:"성실하고 배울 점 많아",v:"아이유"}]},
-            {q: "쇼핑할 때 성향은?", opt: [{t:"힙한 디자인에 꽂힘",v:"제니"}, {t:"가성비와 편안함",v:"이효리"}, {t:"오래 쓰는 깔끔함",v:"수지"}, {t:"필요성 꼼꼼 체크",v:"아이유"}]},
-            {q: "논쟁이 붙었을 때?", opt: [{t:"내 주관은 확실히",v:"제니"}, {t:"서로 생각이 다른 거지",v:"이효리"}, {t:"부드럽게 중재",v:"수지"}, {t:"이성적 근거 제시",v:"아이유"}]},
-            {q: "완벽한 하루 마무리란?", opt: [{t:"하고 싶은 일 다 즐겼을 때",v:"제니"}, {t:"스트레스 없이 쉴 때",v:"이효리"}, {t:"소중한 사람과 보냈을 때",v:"수지"}, {t:"목표를 달성했을 때",v:"아이유"}]}
+        const questions = [
+            { q: "주말에 갑자기 약속이 다 취소되었다. 나의 첫 반응은?", options: [
+                {t: "오히려 좋아! 집에서 넷플릭스 힙한 콘텐츠 정주행", v: "제니"},
+                {t: "바로 배달 앱 켜고 맛있는 거 시켜서 먹부림 시작", v: "풍자"},
+                {t: "혼자만의 여유를 즐기며 라디오 듣거나 멍 때리기", v: "최화정"},
+                {t: "오히려 기회다 싶어 새로운 공부나 자기계발 시작", v: "홍진경"}
+            ]},
+            { q: "친구들과 해외여행을 가게 되었다. 나의 포지션은?", options: [
+                {t: "인생샷 백 장 건질 수 있는 핫플 담당", v: "제니"},
+                {t: "현지 로컬 맛집과 꿀조합 먹방 가이드", v: "풍자"},
+                {t: "언니 동생들 웃겨주며 분위기 폭발시키는 예능캐", v: "김신영"},
+                {t: "영어는 못 해도 온갖 발품 팔며 생존력 만렙 발휘", v: "홍진경"}
+            ]},
+            { q: "회의나 모임에서 누군가 말도 안 되는 실수를 저질렀을 때?", options: [
+                {t: "화끈하고 시원하게 팩트로 짚어주며 분위기 풀기", v: "풍자"},
+                {t: "센스 있는 개그와 드립으로 즉석에서 살려내기", v: "김신영"},
+                {t: "나긋나긋한 미소로 넓은 아량 베풀며 다독이기", v: "최화정"},
+                {t: "연륜에서 나오는 쿨한 마인드로 대수롭지 않게 넘김", v: "선우용녀"}
+            ]},
+            { q: "내가 일이나 과제를 처리하는 방식을 고른다면?", options: [
+                {t: "집중력 폭발해서 힙하고 트렌디하게 결과물 뽑기", v: "제니"},
+                {t: "엉뚱하고 기상천외한 아이디어로 남들 다 하는 방식 거부", v: "홍진경"},
+                {t: "누구보다 부지런하고 철저하게 계획대로 밀어붙이기", v: "김신영"},
+                {t: "오랜 경험과 연륜을 바탕으로 여유롭고 노련하게 해결", v: "선우용녀"}
+            ]},
+            { q: "새로운 사람들과 처음 만나는 자리에서 나는?", options: [
+                {t: "독보적인 아우라와 스타일로 시선 사로잡기", v: "제니"},
+                {t: "특유의 넉살과 화끈한 입담으로 형 동생 다 삼기", v: "풍자"},
+                {t: "우아하고 세련된 미소로 편안한 대화 이끌기", v: "최화정"},
+                {t: "거침없고 솔직한 멘트로 상대방을 무장해제시킴", v: "선우용녀"}
+            ]},
+            { q: "누군가 나에게 이유 없는 잔소리를 할 때 나의 대처는?", options: [
+                {t: "한 귀로 듣고 한 귀로 흘리며 속으로 저녁 메뉴 생각", v: "풍자"},
+                {t: "재치 있는 개그로 상대방을 빵 터지게 만들어 무마함", v: "김신영"},
+                {t: "고급스러운 화법으로 상대방 머쓱하게 만들기", v: "최화정"},
+                {t: "내 인생 내가 산다며 시원하게 쿨한 한 마디 날림", v: "선우용녀"}
+            ]},
+            { q: "스마트폰 앱이나 카톡 창을 정리하는 나의 습관은?", options: [
+                {t: "감성적인 배경화면과 트렌디한 배열 유지", v: "제니"},
+                {t: "안 읽은 카톡 999+개, 알림은 거의 다 방치", v: "홍진경"},
+                {t: "필요한 정보는 철저하게 폴더별로 칼각 정리", v: "김신영"},
+                {t: "복잡한 건 질색! 직관적으로 편하게 배치함", v: "선우용녀"}
+            ]},
+            { q: "길을 가다가 우연히 로또 1등에 당첨된다면?", options: [
+                {t: "당장 사고 싶었던 힙한 패션 아이템 싹 지르기", v: "제니"},
+                {t: "주변 사람들 다 불러 모아서 통 크게 한턱쏘기", v: "풍자"},
+                {t: "맛있는 거 먹으러 전 세계 맛집 투어 비행기 표 끊기", v: "최화정"},
+                {t: "기분 좋게 웃으면서 평소랑 똑같이 일상 즐기기", v: "선우용녀"}
+            ]},
+            { q: "인생을 살아갈 때 내가 가장 중요하게 여겨야 하는 가치는?", options: [
+                {t: "남 눈치 안 보는 나만의 유니크한 개성과 멋", v: "제니"},
+                {t: "후회 없이 화끈하게 먹고 노는 유쾌한 인생", v: "풍자"},
+                {t: "스스로를 아끼고 매일 맛있는 걸로 보상하는 삶", v: "최화정"},
+                {t: "어떤 시련이 와도 툭툭 털고 일어나는 긍정적 마인드", v: "선우용녀"}
+            ]},
+            { q: "식당에 갔는데 내가 주문한 메뉴가 완전히 잘못 나왔다. 이때 나는?", options: [
+                {t: "에이 그냥 주신 거 맛있게 먹지 뭐 하고 먹음", v: "풍자"},
+                {t: "재치 있게 농담 건네면서 바꿔달라고 요청하기", v: "김신영"},
+                {t: "정중하고 우아하게 잘못 나온 메뉴 교체 요청하기", v: "최화정"},
+                {t: "할 말은 똑부러지게 다 하면서 단호하게 해결하기", v: "선우용녀"}
+            ]},
+            { q: "힘든 일이 생겨서 멘탈이 바닥을 칠 때 나만의 극복 방법은?", options: [
+                {t: "친구들과 맛있는 거 잔뜩 먹으면서 수다 떨기", v: "풍자"},
+                {t: "엉뚱한 상상을 하거나 새로운 것에 도전하며 잊기", v: "홍진경"},
+                {t: "혼자만의 시간을 가지며 맛있는 디저트로 힐링", v: "최화정"},
+                {t: "세월이 약이다 하며 쿨하게 잠자고 일어나기", v: "선우용녀"}
+            ]},
+            { q: "남들이 나를 평가할 때 가장 듣기 좋은 칭찬은?", options: [
+                {t: "너 진짜 트렌디하고 대체 불가능한 매력이 있어", v: "제니"},
+                {t: "너랑 있으면 진짜 배 아프게 웃겨서 살 수가 없어", v: "김신영"},
+                {t: "어쩜 그렇게 늘 센스 있고 우아하게 잘 사니", v: "최화정"},
+                {t: "정말 멘탈 강하고 멋진 큰언니 같은 사람이야", v: "선우용녀"}
+            ]},
+            { q: "쇼핑을 할 때 나의 소비 패턴과 성향은?", options: [
+                {t: "요즘 유행하는 힙한 브랜드 신상 위주로 구매", v: "제니"},
+                {t: "리뷰 평점 완벽하게 분석해서 가성비 최고로 삼", v: "홍진경"},
+                {t: "내 삶의 질을 높여줄 예쁘고 아기자기한 소품", v: "최화정"},
+                {t: "오래 쓸 수 있고 실용성 확실한 것만 픽함", v: "선우용녀"}
+            ]},
+            { q: "대화를 하다가 의견 충돌이나 논쟁이 붙었을 때 나는?", options: [
+                {t: "논리적이면서도 재치 있는 입담으로 제압하기", v: "김신영"},
+                {t: "지혜로운 중재와 부드러운 화법으로 유하게 넘기기", v: "최화정"},
+                {t: "아이고 의미 없다~ 하고 쿨하게 내 길 가기", v: "선우용녀"},
+                {t: "남들 안 하는 엉뚱한 시각을 제시하며 허를 찌름", v: "홍진경"}
+            ]},
+            { q: "오늘 하루를 완벽하게 마무리했다고 느끼는 순간은 언제인가?", options: [
+                {t: "오늘 하루도 나 참 멋지게 잘 놀고 잘 살았다", v: "제니"},
+                {t: "오늘 먹은 야식이 세상에서 제일 맛있었을 때", v: "풍자"},
+                {t: "오늘 해야 할 일을 다 끝내고 뿌듯해할 때", v: "홍진경"},
+                {t: "내일도 웃을 일만 생기겠지 하며 기분 좋게 잠들 때", v: "선우용녀"}
+            ]}
         ];
-        let idx = 0, score = { "제니":0, "이효리":0, "수지":0, "아이유":0 };
-        function start() {
-            let q = qList[idx];
-            document.getElementById('bar').style.width = ((idx)/qList.length)*100 + "%";
-            document.getElementById('q-text').innerText = (idx+1) + ". " + q.q;
-            let b = document.getElementById('btns'); b.innerHTML = '';
-            q.opt.forEach(o => {
-                let btn = document.createElement('button');
-                btn.className = 'btn'; btn.innerText = o.t;
-                btn.onclick = () => { score[o.v]++; idx++; idx == qList.length ? show() : start(); };
-                b.appendChild(btn);
+
+        const results = {
+            "풍자": { title: "👄 입담 만렙 먹방 여신 (풍자 재질)", desc: "화끈하고 시원시원한 성격! 센스 있는 입담과 리얼한 예능감으로 주변 사람들을 늘 배꼽 잡게 만드는 유쾌한 매력의 소유자입니다." },
+            "홍진경": { title: "🤪 예측불허 엉뚱 개성파 (홍진경 재질)", desc: "남들은 생각하지 못한 엉뚱한 발상과 남다른 도전 정신! 겉보기엔 우아하지만 반전의 허당미와 엄청난 예능감을 가진 능력자입니다." },
+            "김신영": { title: "🎤 천재적인 예능 치트키 (김신영 재질)", desc: "빠른 두뇌 회전과 찰진 드립으로 어떤 자리든 살려내는 타고난 진행자! 철저한 자기관리와 재치를 모두 갖춘 만능 엔터테이너입니다." },
+            "최화정": { title: "✨ 센스 만점 트렌디 퀸 (최화정 재질)", desc: "언제나 우아하고 세련된 라이프스타일을 즐기는 워너비! 맛있는 것과 아름다운 것을 사랑하며 주변을 환하게 밝히는 긍정 에너지를 가졌습니다." },
+            "제니": { title: "🔥 독보적인 워너비 아이콘 (제니 재질)", desc: "어딜 가나 스포트라이트를 받는 대체 불가한 아우라! 트렌드를 선도하는 힙한 감각과 자신만의 확고한 스타일을 지닌 트렌드세터입니다." },
+            "선우용녀": { title: "👑 쿨내 진동 연륜의 대모 (선우용녀 재질)", desc: "세상의 풍파쯤은 웃어넘기는 엄청난 멘탈과 쿨한 마인드! 거침없고 솔직하면서도 따뜻한 포용력으로 모두를 사로잡는 대장 스타일입니다." }
+        };
+
+        let currentQ = 0;
+        let scores = { "풍자": 0, "홍진경": 0, "김신영": 0, "최화정": 0, "제니": 0, "선우용녀": 0 };
+
+        function loadQ() {
+            if (currentQ >= questions.length) {
+                showResult();
+                return;
+            }
+            let progressPercent = (currentQ / questions.length) * 100;
+            document.getElementById('progress').style.width = progressPercent + '%';
+
+            const qObj = questions[currentQ];
+            document.getElementById('question-text').innerText = (currentQ + 1) + ". " + qObj.q;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            qObj.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.t;
+                btn.onclick = () => {
+                    scores[opt.v]++;
+                    currentQ++;
+                    loadQ();
+                };
+                container.appendChild(btn);
             });
         }
-        function show() {
-            document.getElementById('quiz').style.display = 'none';
-            document.getElementById('result').style.display = 'block';
-            let best = Object.keys(score).reduce((a, b) => score[a] > score[b] ? a : b);
-            document.getElementById('res-title').innerText = "당신은 " + best + " 재질!";
-            document.getElementById('res-desc').innerText = "테스트 결과입니다.";
+
+        function showResult() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+
+            let bestType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+
+            document.getElementById('result-title').innerText = results[bestType].title;
+            document.getElementById('result-desc').innerText = results[bestType].desc;
         }
-        start();
+
+        loadQ();
     </script>
 </body>
 </html>
