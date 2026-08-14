@@ -2,56 +2,192 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>내가 연예인이라면? (남자편)</title>
     <style>
-        body { background: #fff5f7; font-family: sans-serif; display: flex; justify-content: center; padding: 20px; }
-        .container { width: 100%; max-width: 500px; background: white; padding: 30px; border-radius: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
-        .option-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; background: white; border: 2px solid #ffccd5; border-radius: 15px; cursor: pointer; text-align: left; font-weight: 600; }
-        .option-btn:hover { background: #ff6b81; color: white; }
+        :root {
+            --bg-color: #fff5f7;
+            --card-bg: #ffffff;
+            --primary: #ff6b81;
+            --primary-hover: #ff4757;
+            --text-main: #2d3436;
+            --text-sub: #636e72;
+            --border: #ffe4e6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { width: 100%; max-width: 600px; background: var(--card-bg); border-radius: 30px; padding: 40px; border: 2px solid var(--border); box-shadow: 0 10px 30px rgba(255, 182, 193, 0.3); }
+        .progress-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
+        .progress { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s ease; }
+        .question-box { font-size: 1.15rem; font-weight: 700; margin-bottom: 25px; text-align: center; line-height: 1.5; color: var(--text-main); }
+        .option-btn { background: #fff; border: 2px solid #ffccd5; border-radius: 20px; padding: 16px 20px; margin-bottom: 12px; width: 100%; text-align: left; cursor: pointer; color: var(--text-main); font-weight: 600; transition: 0.2s; font-size: 1rem; }
+        .option-btn:hover { border-color: var(--primary); background: var(--primary); color: white; transform: translateY(-2px); }
+        .result-box { display: none; text-align: center; }
+        .result-title { color: var(--primary); font-size: 1.6rem; font-weight: 800; margin-bottom: 15px; }
+        .result-desc { background: #fff5f7; padding: 25px; border-radius: 20px; text-align: left; line-height: 1.7; color: var(--text-sub); border: 1px solid var(--border); margin-bottom: 25px; }
+        .restart-btn { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 16px; font-weight: 700; cursor: pointer; width: 100%; font-size: 1.1rem; transition: 0.2s; }
+        .restart-btn:hover { background: var(--primary-hover); }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="quiz-screen">
-            <h2 id="q-text">질문이 여기에 나옵니다</h2>
-            <div id="options"></div>
+            <h1 style="text-align:center; margin-bottom:20px; font-size:1.4rem; color:var(--primary);">✨ 내가 남자 연예인이라면?</h1>
+            <div class="progress-bar"><div class="progress" id="progress"></div></div>
+            <div class="question-box" id="question-text">문항 로딩중...</div>
+            <div id="options-container"></div>
         </div>
-        <div id="result-screen" style="display:none; text-align:center;">
-            <h2 id="res-title"></h2>
-            <p id="res-desc"></p>
-            <button class="option-btn" onclick="location.href='index.html'">메인으로</button>
+        <div class="result-box" id="result-screen">
+            <h2 id="result-title" class="result-title"></h2>
+            <div id="result-desc" class="result-desc"></div>
+            <button class="restart-btn" onclick="location.href='index.html'">메인으로 돌아가기</button>
         </div>
     </div>
+
     <script>
         const questions = [
-            { q: "주말 약속이 취소되었다. 나의 첫 반응은?", options: [{t:"혼자만의 시간 너무 좋다", v:"침착맨"}, {t:"당장 다른 사람 호출", v:"유재석"}, {t:"집에서 유튜브 봐야지", v:"곽튜브"}, {t:"꾸미고 핫플 간다", v:"큐영"}, {t:"하던 일 마저 한다", v:"정일영"}, {t:"그냥 누워있는다", v:"기안84"}] },
-            { q: "친구들과 여행, 나는 어떤 포지션?", options: [{t:"계획 짜는 리더", v:"유재석"}, {t:"맛집 다 찾아둔 정보왕", v:"곽튜브"}, {t:"분위기 메이커", v:"정일영"}, {t:"패션 담당", v:"큐영"}, {t:"그냥 따라감", v:"기안84"}, {t:"멍 때리다 뼈 때리는 말", v:"침착맨"}] },
-            { q: "일 처리를 할 때 나의 방식은?", options: [{t:"완벽하고 꼼꼼하게", v:"유재석"}, {t:"효율적으로 빠르게", v:"곽튜브"}, {t:"직관과 센스로", v:"정일영"}, {t:"내 감각대로", v:"큐영"}, {t:"그때그때 생각나는 대로", v:"기안84"}, {t:"되는대로 대충", v:"침착맨"}] },
-            // ... (이렇게 15번까지 반복)
-            { q: "15. 마지막 선택, 내가 가장 추구하는 것은?", options: [{t:"성공과 인정", v:"유재석"}, {t:"재미와 유머", v:"침착맨"}, {t:"자유와 여행", v:"곽튜브"}, {t:"개성과 스타일", v:"큐영"}, {t:"성취와 열정", v:"정일영"}, {t:"나다움", v:"기안84"}] }
+            { q: "주말에 갑자기 약속이 다 취소되었다. 나의 첫 반응은?", options: [
+                {t: "1. 소리 지르며 당장 다른 약속을 잡는다", v: "유재석"},
+                {t: "2. 침대랑 합체해서 유튜브나 보며 뒹군다", v: "침착맨"},
+                {t: "3. 배달음식이나 시키면서 혼자만의 맛집 탐방 계획을 세운다", v: "곽튜브"},
+                {t: "4. 거울 보며 오늘 못 입은 예쁜 옷이나 입어볼까 한다", v: "큐영"}
+            ]},
+            { q: "친구들과 다 함께 해외여행을 가게 되었다. 나의 포지션은?", options: [
+                {t: "1. 일정표 짜고 낙오자 없이 인원 통솔하는 대장", v: "유재석"},
+                {t: "2. 어디 가든 귀찮으니 남 따라다니는 병풍", v: "침착맨"},
+                {t: "3. 현지 맛집과 로컬 꿀팁을 싹 다 조사해 온 정보통", v: "곽튜브"},
+                {t: "4. 실무를 도맡아 하거나 묵묵히 일하는 일꾼", v: "정일영"}
+            ]},
+            { q: "회의나 모임에서 누군가 말도 안 되는 실수를 저질렀을 때?", options: [
+                {t: "1. 부드럽게 수습하고 분위기를 민망하지 않게 포장해 준다", v: "유재석"},
+                {t: "2. 속으로 '뭐 하는 거지' 하다가 영혼 없이 박수 쳐준다", v: "침착맨"},
+                {t: "3. 당장 뭐가 잘못됐는지 팩트 체크부터 들어가서 수정한다", v: "정일영"},
+                {t: "4. 에이 그럴 수도 있지 뭐 하고 대수롭지 않게 넘긴다", v: "기안84"}
+            ]},
+            { q: "내가 일이나 과제를 처리하는 방식을 고른다면?", options: [
+                {t: "1. 마감 기한보다 훨씬 전에 완벽하게 검토까지 끝낸다", v: "유재석"},
+                {t: "2. 마감 직전까지 미루다가 마지못해 간신히 해낸다", v: "침착맨"},
+                {t: "3. 밤을 새워서라도 결과물의 퀄리티를 최고로 뽑아낸다", v: "정일영"},
+                {t: "4. 영감이 떠오를 때까지 아예 손도 안 댄다", v: "기안84"}
+            ]},
+            { q: "새로운 사람들과 처음 만나는 자리에서 나는?", options: [
+                {t: "1. 분위기를 주도하며 질문도 던지고 리액션을 봇물처럼 한다", v: "유재석"},
+                {t: "2. 특유의 넉살과 친화력으로 금방 형 동생 하며 친해진다", v: "곽튜브"},
+                {t: "3. 나를 각인시키기 위해 화려한 입담과 제스처를 뽐낸다", v: "큐영"},
+                {t: "4. 말수 없이 멍 때리다가 뜬금없는 소리로 사람들을 웃긴다", v: "기안84"}
+            ]},
+            { q: "누군가 나에게 이유 없는 잔소리나 비난을 할 때 나의 대처는?", options: [
+                {t: "1. 상대방의 입장을 먼저 이해하려 애쓰며 대화로 푼다", v: "유재석"},
+                {t: "2. 네네 하고 귀로 흘려버린 뒤 머릿속으로 저녁 메뉴 생각한다", v: "침착맨"},
+                {t: "3. 논리적인 근거를 대며 반박하거나 내 할 일을 똑바로 한다", v: "정일영"},
+                {t: "4. 상대방이 안쓰러워 보이며 깊은 대꾸를 포기한다", v: "기안84"}
+            ]},
+            { q: "스마트폰 앱이나 카톡 창을 정리하는 나의 습관은?", options: [
+                {t: "1. 안 읽은 메시지 0개, 알림은 전부 꺼두고 폴더별 칼각 정리", v: "유재석"},
+                {t: "2. 안 읽은 카톡 999+개, 알림이 오든 말든 방치함", v: "침착맨"},
+                {t: "3. 감각적인 배경화면과 내가 잘 나온 프프로 꾸며놓음", v: "큐영"},
+                {t: "4. 뭐가 어디 있는지 나도 모름. 그냥 화면에 보이는 대로 씀", v: "기안84"}
+            ]},
+            { q: "길을 가다가 우연히 로또 1등에 당첨된다면 가장 먼저 하고 싶은 일은?", options: [
+                {t: "1. 부모님께 즉시 알리고 주변 사람들을 도울 계획을 세운다", v: "유재석"},
+                {t: "2. 당장 회사 때려치고 세계 일주 비행기 표부터 끊는다", v: "곽튜브"},
+                {t: "3. 자산 관리사부터 찾아서 완벽한 재테크 포트폴리오를 짠다", v: "정일영"},
+                {t: "4. 별 감흥 없이 평소랑 똑같이 자다 ꐔ", v: "기안84"}
+            ]},
+            { q: "인생을 살아갈 때 내가 가장 중요하게 여겨야 하는 가치는?", options: [
+                {t: "1. 성실함과 타인에 대한 배려, 그리고 사회적 성공", v: "유재석"},
+                {t: "2. 마음의 평화와 귀찮지 않은 일상", v: "침착맨"},
+                {t: "3. 타인에게 휩쓸리지 않는 나만의 독보적인 개성", v: "큐영"},
+                {t: "4. 남 눈치 안 보고 내 본능대로 사는 자유", v: "기안84"}
+            ]},
+            { q: "식당에 갔는데 내가 주문한 메뉴가 완전히 잘못 나왔다. 이때 나는?", options: [
+                {t: "1. \"아, 메뉴가 잘못 나왔네요~ 괜찮으니 바꿔주세요!\" 하고 웃음", v: "유재석"},
+                {t: "2. 에이 그냥 먹지 뭐 하고 대충 입에 집어넣음", v: "침착맨"},
+                {t: "3. 정확하게 내가 시킨 영수증 내밀며 칼같이 교체 요청함", v: "정일영"},
+                {t: "4. 그냥 주는 대로 먹거나 배 채우면 그만이라고 생각함", v: "기안84"}
+            ]},
+            { q: "힘든 일이 생겨서 멘탈이 바닥을 칠 때 나만의 극복 방법은?", options: [
+                {t: "1. 친한 사람들과 수다를 떨며 스트레스를 발산한다", v: "유재석"},
+                {t: "2. 이불 속으로 쏙 들어가서 아무 생각 없이 잠을 잔다", v: "침착맨"},
+                {t: "3. 원인이 뭔지 분석하고 해결책을 노트에 적어둔다", v: "정일영"},
+                {t: "4. 시간이 해결해 주겠지 하고 멍 때리며 산책함", v: "기안84"}
+            ]},
+            { q: "남들이 나를 평가할 때 가장 듣기 좋은 칭찬은?", options: [
+                {t: "1. \"정말 믿음직스럽고 바른 사람이야\"", v: "유재석"},
+                {t: "2. \"너 땜에 진짜 배 아프게 웃었다, 웃긴 사람이야\"", v: "침착맨"},
+                {t: "3. \"진짜 트렌디하고 너만의 색깔이 확실해\"", v: "큐영"},
+                {t: "4. \"능력 있고 일 처리 하나는 기가 막히게 잘해\"", v: "정일영"}
+            ]},
+            { q: "쇼핑을 할 때 나의 소비 패턴과 성향은?", options: [
+                {t: "1. 유행 안 타고 오래 쓸 수 있는 실용적이고 깔끔한 브랜드 구입", v: "유재석"},
+                {t: "2. 가성비 좋고 리뷰 평점 완벽하게 분석해서 알뜰하게 삼", v: "곽튜브"},
+                {t: "3. 보자마자 \"이건 내 거야!\" 하고 감성이나 디자인에 반해서 구입", v: "큐영"},
+                {t: "4. 필요한 목적이 뚜렷할 때만 계획적으로 구매함", v: "정일영"}
+            ]},
+            { q: "대화를 하다가 의견 충돌이나 논쟁이 붙었을 때 나는?", options: [
+                {t: "1. 양쪽 입장을 다 들어주며 원만하게 중재하려고 함", v: "유재석"},
+                {t: "2. \"네 말이 다 맞습니다~\" 하고 영혼 없이 대화 종료함", v: "침착맨"},
+                {t: "3. 논리적인 팩트로 상대방의 말을 조목조목 반박함", v: "정일영"},
+                {t: "4. 싸우기 귀찮아서 그냥 피하거나 무시함", v: "기안84"}
+            ]},
+            { q: "오늘 하루를 완벽하게 마무리했다고 느끼는 순간은 언제인가?", options: [
+                {t: "1. 세운 계획을 모두 실천하고 주변 사람들과 좋은 기분을 나눴을 때", v: "유재석"},
+                {t: "2. 침대에 누워서 눈 감기 직전까지 아무 생각 없이 쉴 때", v: "침착맨"},
+                {t: "3. 오늘 해야 할 일의 투두리스트를 전부 지웠을 때", v: "정일영"},
+                {t: "4. 세상 속세에서 벗어나 온전히 나만의 시간을 보냈을 때", v: "기안84"}
+            ]}
         ];
-        // 위와 같은 형식으로 15개 문항을 채워주세요. (문항 내용은 위처럼 성격 유형별로 배치하면 됩니다.)
-        let counts = {"유재석":0, "침착맨":0, "곽튜브":0, "큐영":0, "정일영":0, "기안84":0};
+
+        const results = {
+            "유재석": { title: "🎤 철저한 국민 진행자 (유재석 재질)", desc: "어딜 가나 사람들을 챙기고 분위기를 이끄는 타고난 리더! 철저한 자기관리와 배려심으로 모두에게 신뢰를 주는 완벽주의 방송인 스타일입니다." },
+            "침착맨": { title: "🛋️ 무소신 방구석 철학자 (침착맨 재질)", desc: "귀찮은 건 질색! 영혼 없는 리액션과 달관한 눈빛으로 방구석을 지키지만, 은근히 사람을 무장해제시키는 묘한 매력의 소유자입니다." },
+            "곽튜브": { title: "✈️ 현실 밀착 생존왕 (곽튜브 재질)", desc: "어디에 떨어져도 살아남을 강력한 생활력과 넉살! 친근하고 유쾌한 매력으로 사람들의 공감을 200% 이끌어내는 리얼 예능캐입니다." },
+            "큐영": { title: "💅 개성 폭발 트렌드세터 (큐영 재질)", desc: "남의 시선 따위는 신경 쓰지 않는다! 오직 나마의 힙한 감성과 독보적인 스타일로 어딜 가나 스포트라이트를 받는 개성파 캐릭터입니다." },
+            "정일영": { title: "💼 뼛속까지 워커홀릭 (정일영 재질)", desc: "목표를 향해 칼같이 파고드는 성실함과 뛰어난 업무 능력! 철저한 팩트와 계획으로 성취를 이뤄내는 능력자 스타일입니다." },
+            "기안84": { title: "🎨 자유로운 웹툰 영혼 (기안84 재질)", desc: "세상의 틀에 갇히지 않는 날것 그대로의 순수함! 엉뚱하지만 진정성 넘치는 매력으로 사람들을 미소 짓게 만드는 대체 불가 자연인입니다." }
+        };
+
         let currentQ = 0;
+        let scores = { "유재석": 0, "침착맨": 0, "곽튜브": 0, "큐영": 0, "정일영": 0, "기안84": 0 };
+
         function loadQ() {
-            if(currentQ >= questions.length) { showResult(); return; }
-            document.getElementById('q-text').innerText = (currentQ+1) + ". " + questions[currentQ].q;
-            const optDiv = document.getElementById('options');
-            optDiv.innerHTML = '';
-            questions[currentQ].options.forEach(o => {
-                const b = document.createElement('button');
-                b.className = 'option-btn';
-                b.innerText = o.t;
-                b.onclick = () => { counts[o.v]++; currentQ++; loadQ(); };
-                optDiv.appendChild(b);
+            if (currentQ >= questions.length) {
+                showResult();
+                return;
+            }
+            let progressPercent = (currentQ / questions.length) * 100;
+            document.getElementById('progress').style.width = progressPercent + '%';
+
+            const qObj = questions[currentQ];
+            document.getElementById('question-text').innerText = (currentQ + 1) + ". " + qObj.q;
+            
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            qObj.options.exports?.apply ? null : qObj.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.t;
+                btn.onclick = () => {
+                    scores[opt.v]++;
+                    currentQ++;
+                    loadQ();
+                };
+                container.appendChild(btn);
             });
         }
+
         function showResult() {
-            let res = Object.keys(counts).reduce((a, b) => counts[a] > counts[b] ? a : b);
             document.getElementById('quiz-screen').style.display = 'none';
-            document.getElementById('res-title').innerText = "당신은 " + res + " 재질!";
             document.getElementById('result-screen').style.display = 'block';
+
+            // 가장 점수가 높은 캐릭터 찾기
+            let bestType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
+
+            document.getElementById('result-title').innerText = results[bestType].title;
+            document.getElementById('result-desc').innerText = results[bestType].desc;
         }
+
         loadQ();
     </script>
 </body>
