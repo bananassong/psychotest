@@ -1,1 +1,91 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>내가 여자 연예인이라면?</title>
+    <style>
+        :root {
+            --bg-color: #fff5f7;
+            --card-bg: #ffffff;
+            --primary: #ff6b81;
+            --primary-hover: #ff4757;
+            --text-main: #2d3436;
+            --text-sub: #636e72;
+            --border: #ffe4e6;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
+        .container { width: 100%; max-width: 500px; background: var(--card-bg); border-radius: 30px; padding: 40px 25px; border: 2px solid var(--border); box-shadow: 0 10px 30px rgba(255, 182, 193, 0.3); }
+        h1 { color: var(--primary); text-align: center; font-size: 1.5rem; margin-bottom: 25px; }
+        .question-box { font-size: 1.15rem; font-weight: 700; margin-bottom: 25px; text-align: center; line-height: 1.5; color: var(--text-main); }
+        .option-btn { background: #fff; border: 2px solid #ffccd5; border-radius: 20px; padding: 18px 20px; margin-bottom: 12px; width: 100%; text-align: left; cursor: pointer; color: var(--text-main); font-weight: 600; transition: 0.2s; }
+        .option-btn:hover { border-color: var(--primary); background: var(--primary); color: white; transform: translateY(-2px); }
+        .result-box { display: none; text-align: center; }
+        .result-title { color: var(--primary); font-size: 1.4rem; font-weight: 800; margin-bottom: 15px; }
+        .result-desc { background: #fff5f7; padding: 20px; border-radius: 20px; text-align: left; line-height: 1.7; color: var(--text-sub); border: 1px solid var(--border); margin-bottom: 25px; }
+        .restart-btn { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 16px; font-weight: 700; cursor: pointer; width: 100%; transition: 0.2s; }
+        .restart-btn:hover { background: var(--primary-hover); }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="quiz-screen">
+            <h1>✨ 내가 여자 연예인이라면?</h1>
+            <div id="question-text" class="question-box">문항 로딩중...</div>
+            <div id="options-container"></div>
+        </div>
+        <div class="result-box" id="result-screen">
+            <h2 id="result-title" class="result-title"></h2>
+            <div id="result-desc" class="result-desc"></div>
+            <button class="restart-btn" onclick="location.href='index.html'">메인으로 돌아가기</button>
+        </div>
+    </div>
 
+    <script>
+        const questions = [
+            { q: "친구들과 모임에서 나의 모습은?", options: [
+                { text: "1. 분위기 메이커! 웃음 폭탄 투하", type: "풍자" },
+                { text: "2. 센스 있게 상황 정리하고 리드함", type: "주현영" },
+                { text: "3. 조용하지만 확실한 존재감, 스타일 담당", type: "제니" },
+                { text: "4. 차분하게 대화에 귀 기울여줌", type: "아이유" },
+                { text: "5. 리액션 최고! 사랑둥이 모드", type: "박보영" },
+                { text: "6. 가끔 엉뚱한 말로 다들 빵 터뜨림", type: "안은진" }
+            ]}
+        ];
+
+        const results = {
+            "풍자": { title: "👄 입담 만렙 토크 퀸 (풍자 재질)", desc: "화끈하고 시원시원한 성격! 센스 있는 입담과 재치로 사람들을 배꼽 잡게 만드는 타고난 예능캐입니다." },
+            "주현영": { title: "💼 센스 만점 인턴 (주현영 재질)", desc: "눈치 빠르고 센스 넘치며, 사회생활 100단 만렙인 스마트 캐릭터! 과몰입 장인으로 주변 사람들에게 늘 큰 웃음을 줍니다." },
+            "제니": { title: "🔥 워너비 트렌드세터 (제니 재질)", desc: "독보적인 아우라와 스타일을 가진 이 시대의 아이콘! 뭘 하든 화제가 되는 대체 불가한 매력의 소유자입니다." },
+            "아이유": { title: "🌙 감성 가득 차분함 (아이유 재질)", desc: "조용하고 내성적이지만, 누구보다 속이 깊고 자기만의 세계가 확실합니다. 주변 사람을 위로할 줄 아는 깊은 울림의 소유자예요." },
+            "박보영": { title: "🌸 사랑스러운 공감 요정 (박보영 재질)", desc: "조심스럽고 내향적인 성격이지만, 특유의 러블리함과 따뜻한 공감 능력으로 모두의 마음을 무장해제시키는 힐링형 캐릭터입니다." },
+            "안은진": { title: "🍃 엉뚱한 매력의 관찰자 (안은진 재질)", desc: "평소엔 조용히 사람들을 관찰하지만, 한 번씩 던지는 엉뚱한 멘트가 매력 포인트! 순수하고 맑은 에너지로 주위를 편안하게 만듭니다." }
+        };
+
+        let currentQ = 0; let choiceCounts = {};
+        function loadQ() {
+            if (currentQ >= questions.length) { showResult(); return; }
+            const q = questions[currentQ];
+            document.getElementById('question-text').innerText = q.q;
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'option-btn';
+                btn.innerText = opt.text;
+                btn.onclick = () => { choiceCounts[opt.type] = (choiceCounts[opt.type] || 0) + 1; currentQ++; loadQ(); };
+                container.appendChild(btn);
+            });
+        }
+        function showResult() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            let bestType = Object.keys(results)[Math.floor(Math.random()*6)];
+            document.getElementById('result-title').innerText = results[bestType].title;
+            document.getElementById('result-desc').innerText = results[bestType].desc;
+        }
+        loadQ();
+    </script>
+</body>
+</html>
