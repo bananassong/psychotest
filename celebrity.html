@@ -92,7 +92,7 @@
                 {t: "1. 부모님께 즉시 알리고 주변 사람들을 도울 계획을 세운다", v: "유재석"},
                 {t: "2. 당장 회사 때려치고 세계 일주 비행기 표부터 끊는다", v: "곽튜브"},
                 {t: "3. 자산 관리사부터 찾아서 완벽한 재테크 포트폴리오를 짠다", v: "정일영"},
-                {t: "4. 별 감흥 없이 평소랑 똑같이 자다 ꐔ", v: "기안84"}
+                {t: "4. 별 감흥 없이 평소랑 똑같이 잠", v: "기안84"}
             ]},
             { q: "인생을 살아갈 때 내가 가장 중요하게 여겨야 하는 가치는?", options: [
                 {t: "1. 성실함과 타인에 대한 배려, 그리고 사회적 성공", v: "유재석"},
@@ -164,7 +164,7 @@
             const container = document.getElementById('options-container');
             container.innerHTML = '';
             
-            qObj.options.exports?.apply ? null : qObj.options.forEach(opt => {
+            qObj.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
                 btn.innerText = opt.t;
@@ -181,7 +181,6 @@
             document.getElementById('quiz-screen').style.display = 'none';
             document.getElementById('result-screen').style.display = 'block';
 
-            // 가장 점수가 높은 캐릭터 찾기
             let bestType = Object.keys(scores).reduce((a, b) => scores[a] > scores[b] ? a : b);
 
             document.getElementById('result-title').innerText = results[bestType].title;
