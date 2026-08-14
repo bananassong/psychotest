@@ -9,64 +9,184 @@
             --bg-color: #0f172a;
             --card-bg: #1e293b;
             --primary: #f43f5e;
-            --primary-hover: #e11d48;
             --text-main: #f8fafc;
             --text-sub: #94a3b8;
             --border: #334155;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Pretendard', sans-serif; }
         body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .container { width: 100%; max-width: 600px; background: var(--card-bg); border-radius: 24px; padding: 40px; border: 1px solid var(--border); }
-        .progress-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 35px; overflow: hidden; }
+        .container { width: 100%; max-width: 600px; background: var(--card-bg); border-radius: 24px; padding: 40px; border: 1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.3); }
+        .progress-bar { width: 100%; height: 6px; background: var(--border); border-radius: 3px; margin-bottom: 30px; overflow: hidden; }
         .progress { width: 0%; height: 100%; background: var(--primary); transition: width 0.3s ease; }
-        .question-box { font-size: 1.25rem; font-weight: 600; margin-bottom: 30px; text-align: center; }
-        .option-btn { background: #111827; border: 2px solid var(--border); border-radius: 14px; padding: 18px 20px; margin-bottom: 14px; width: 100%; text-align: left; cursor: pointer; color: white; transition: 0.2s; }
-        .option-btn:hover { border-color: var(--primary); background: #1f2937; }
+        .question-box { font-size: 1.2rem; font-weight: 600; margin-bottom: 25px; text-align: center; line-height: 1.5; }
+        .option-btn { background: #111827; border: 2px solid var(--border); border-radius: 14px; padding: 16px 20px; margin-bottom: 12px; width: 100%; text-align: left; cursor: pointer; color: white; font-size: 1rem; transition: 0.2s; }
+        .option-btn:hover { border-color: var(--primary); background: #1f2937; transform: translateY(-2px); }
         .result-box { display: none; text-align: center; }
-        .restart-btn { background: var(--primary); color: white; border: none; border-radius: 14px; padding: 16px 32px; margin-top: 20px; cursor: pointer; width: 100%; }
+        .restart-btn { background: var(--primary); color: white; border: none; border-radius: 14px; padding: 16px 32px; margin-top: 25px; cursor: pointer; width: 100%; font-size: 1.1rem; font-weight: bold; }
+        .restart-btn:hover { background: #e11d48; }
     </style>
 </head>
 <body>
     <div class="container">
         <div id="quiz-screen">
-            <h1>🔥 나의 통제광 레벨 테스트</h1>
+            <h1 style="text-align:center; margin-bottom:20px; font-size:1.4rem; color:#fb7185;">🔥 통제광 레벨 테스트</h1>
             <div class="progress-bar"><div class="progress" id="progress"></div></div>
             <div class="question-box" id="question-text">문항 로딩중...</div>
             <div id="options-container"></div>
         </div>
         <div class="result-box" id="result-screen">
-            <h2 id="result-title" style="color:#fb7185; margin-bottom:20px;"></h2>
-            <div id="result-desc" style="background:#111827; padding:20px; border-radius:10px; text-align:left; line-height:1.7;"></div>
+            <h2 id="result-title" style="color:#fb7185; margin-bottom:15px; font-size:1.8rem;"></h2>
+            <div id="result-desc" style="background:#111827; padding:20px; border-radius:14px; text-align:left; line-height:1.7; color:var(--text-sub); border:1px solid var(--border);"></div>
             <button class="restart-btn" onclick="location.href='index.html'">메인으로 돌아가기</button>
         </div>
     </div>
+
     <script>
         const questions = [
-            { q: "약속 시간에 친구가 늦는다고 하면?", options: [{text:"1. 이해하려 애쓴다", score:1}, {text:"2. 시간 재조정한다", score:3}, {text:"3. 속에서 스팀이 오른다", score:5}] },
-            { q: "여행 일정 짤 때 나는?", options: [{text:"1. 분 단위 계획", score:5}, {text:"2. 큰 틀만 계획", score:3}, {text:"3. 무계획이 편함", score:1}] },
-            { q: "내 물건 위치가 바뀌어 있으면?", options: [{text:"1. 상관없음", score:1}, {text:"2. 조금 신경 쓰임", score:3}, {text:"3. 칼같이 돌려놓음", score:5}] }
+            { q: "약속 시간에 친구가 늦는다고 연락이 왔을 때 나의 심경은?", options: [
+                {t: "1. 무슨 일 생겼나 걱정부터 앞선다.", v: 0},
+                {t: "2. 올 때 됐으니 그러려니 기다린다.", v: 1},
+                {t: "3. 내 소중한 시간이 허비되는 것 같아 살짝 짜증 난다.", v: 2},
+                {t: "4. 애초에 왜 미리 시간을 안 맞추지? 속에서 스팀이 오른다.", v: 3}
+            ]},
+            { q: "여행 계획을 세울 때 나의 모습은?", options: [
+                {t: "1. 발길 닿는 대로 움직이는 무계획이 최고다.", v: 0},
+                {t: "2. 큰 숙소랑 이동 수단만 정하고 세부 일정은 대충 잡는다.", v: 1},
+                {t: "3. 맛집과 주요 코스를 시간대별로 꼼꼼하게 적어둔다.", v: 2},
+                {t: "4. 분 단위로 일정을 짜고 비상 플랜 B까지 완벽 대비한다.", v: 3}
+            ]},
+            { q: "내 방이나 책상 위에 물건 위치가 바뀌어 있으면?", options: [
+                {t: "1. 누가 만졌는지 전혀 눈치채지 못한다.", v: 0},
+                {t: "2. 아, 누가 만졌구나 싶지만 그냥 넘어간다.", v: 1},
+                {t: "3. 살짝 거슬려서 원래 자리에 돌려놓는다.", v: 2},
+                {t: "4. 내 영역을 침범당한 기분이라 당장 원래대로 칼같이 돌려놓는다.", v: 3}
+            ]},
+            { q: "친구가 운전하는 차 조수석에 탔을 때 나는?", options: [
+                {t: "1. 편하게 잠을 자거나 바깥 구경을 한다.", v: 0},
+                {t: "2. 운전에 신경 쓰지 않고 음악을 고르거나 수다를 떤다.", v: 1},
+                {t: "3. 은근히 브레이크 밟는 타이밍이나 차선을 신경 쓰며 본다.", v: 2},
+                {t: "4. 속도, 차선 변경 타이밍까지 사사건건 잔소리하며 불안해한다.", v: 3}
+            ]},
+            { q: "식당에서 요리를 주문할 때 나는?", options: [
+                {t: "1. 아무거나 남이 추천해 주는 걸로 잘 먹는다.", v: 0},
+                {t: "2. 대충 먹고 싶은 메인 메뉴 하나를 빠르게 고른다.", v: 1},
+                {t: "3. 블로그 리뷰를 싹 찾아보고 실패 없는 조합으로 주문한다.", v: 2},
+                {t: "4. 재료 구성, 가성비, 코스 순서까지 완벽하게 주도해서 시킨다.", v: 3}
+            ]},
+            { q: "여럿이서 조별 과제나 팀 프로젝트를 할 때 나의 성향은?", options: [
+                {t: "1. 흐름에 몸을 맡기고 남이 하자는 대로 조용히 따른다.", v: 0},
+                {t: "2. 맡은 몫은 하겠지만 남의 일에 크게 간섭하진 않는다.", v: 1},
+                {t: "3. 전체적인 진행 상황이 어떻게 돌아가나 매번 확인한다.", v: 2},
+                {t: "4. 내가 총대 메고 처음부터 끝까지 다 통제하고 주도해야 직성이 풀린다.", v: 3}
+            ]},
+            { q: "내 예상대로 일이 흘러가지 않고 변수가 생겼을 때?", options: [
+                {t: "1. 흘러가는 대로 상황에 유연하게 대처한다.", v: 0},
+                {t: "2. 당황스럽지만 이내 마음을 추스르고 방법을 찾는다.", v: 1},
+                {t: "3. 스트레스를 받고 머릿속이 복잡해진다.", v: 2},
+                {t: "4. 내 통제를 벗어난 상황에 분노하고 극심한 불안을 느낀다.", v: 3}
+            ]},
+            { q: "다른 사람이 내 물건을 빌려달라고 할 때?", options: [
+                {t: "1. 흔쾌히 빌려주고 잊고 지낸다.", v: 0},
+                {t: "2. 깨끗하게 써달라고 가볍게 말하고 빌려준다.", v: 1},
+                {t: "3. 빌려주긴 하지만 언제 돌려받을지 은근히 신경 쓰인다.", v: 2},
+                {t: "4. 웬만하면 내 물건은 절대 남에게 빌려주지 않는다.", v: 3}
+            ]},
+            { q: "요리나 청소를 할 때 나만의 방식이 있다면?", options: [
+                {t: "1. 결과물만 좋으면 과정은 대충대충 해도 상관없다.", v: 0},
+                {t: "2. 대충 눈대중으로 대단치 않게 끝낸다.", v: 1},
+                {t: "3. 나름의 순서와 규칙을 지키면서 하려고 한다.", v: 2},
+                {t: "4. 순서, 각도, 도구 위치까지 나만의 칼 같은 루틴과 기준이 있다.", v: 3}
+            ]},
+            { q: "대화할 때 상대방이 내 말의 흐름을 끊거나 엉뚱한 소릴 하면?", options: [
+                {t: "1. 그냥 웃어넘기고 상대방 장단에 맞춰준다.", v: 0},
+                {t: "2. 흐름이 끊겨도 그러려니 하고 대화를 이어간다.", v: 1},
+                {t: "3. 속으로 '내 말 좀 끝까지 듣지' 하고 답답해한다.", v: 2},
+                {t: "4. 대화의 맥락을 다시 내 뜻대로 정확하게 잡아끌어 와야 한다.", v: 3}
+            ]},
+            { q: "메신저나 카톡을 보낼 때 나의 스타일은?", options: [
+                {t: "1. 오타가 나든 말든 대충 편하게 보낸다.", v: 0},
+                {t: "2. 맞춤법만 대충 맞추고 빠르게 답장한다.", v: 1},
+                {t: "3. 문장부호나 띄어쓰기를 은근히 신경 써서 보낸다.", v: 2},
+                {t: "4. 맞춤법, 띄어쓰기, 이모티콘 배치까지 완벽해야 전송한다.", v: 3}
+            ]},
+            { q: "가전제품을 사거나 매뉴얼을 볼 때 나는?", options: [
+                {t: "1. 설명서 따윈 안 보고 대충 감으로 만져본다.", v: 0},
+                {t: "2. 안 되는 기능이 생기면 그때 대충 찾아본다.", v: 1},
+                {t: "3. 기본적인 주의사항은 대충 훑어보고 조립/작동한다.", v: 2},
+                {t: "4. 설명서를 정독하고 순서대로 완벽하게 세팅해야 직성이 풀린다.", v: 3}
+            ]},
+            { q: "친구가 내 조언이나 충고를 무시하고 제멋대로 행동할 때?", options: [
+                {t: "1. 각자 인생이니까 알아서 하겠지 하고 만다.", v: 0},
+                {t: "2. 말려도 소용없으니 조용히 지켜본다.", v: 1},
+                {t: "3. 안타깝고 답답해서 잔소리가 다시 나온다.", v: 2},
+                {t: "4. 내 말을 무시했다는 것에 화가 나고 결국 망하는 걸 확인해야 한다.", v: 3}
+            ]},
+            { q: "내 스마트폰 홈 화면이나 앱 정돈 상태는?", options: [
+                {t: "1. 페이지마다 앱이 뒤죽박죽 널려 있다.", v: 0},
+                {t: "2. 자주 쓰는 것만 대충 첫 화면에 두는 편이다.", v: 1},
+                {t: "3. 성향별이나 종류별로 폴더에 깔끔하게 묶어둔다.", v: 2},
+                {t: "4. 색상별 또는 가나다순으로 한 치의 오차도 없이 완벽 정돈되어 있다.", v: 3}
+            ]},
+            { q: "인생을 살아갈 때 내가 가장 중요하게 생각하는 것은?", options: [
+                {t: "1. 흘러가는 대로 즐겁게 사는 유연함", v: 0},
+                {t: "2. 적당한 균형과 평화로운 일상", v: 1},
+                {t: "3. 내 삶의 주도권을 쥐고 흔들리는 것 방지", v: 2},
+                {t: "4. 주변의 모든 상황과 사람을 내 통제하에 두는 완벽함", v: 3}
+            ]}
         ];
-        // ... (나머지 15문항 아까 그 코드를 넣어주면 돼!)
-        // 일단 테스트용으로 3개만 넣었어. 전체 다 필요하면 말해줘!
-        let currentQ = 0; let score = 0;
+
+        let currentQ = 0;
+        let totalScore = 0;
+
         function loadQ() {
-            if(currentQ >= questions.length) {
-                document.getElementById('quiz-screen').style.display='none';
-                document.getElementById('result-screen').style.display='block';
-                document.getElementById('result-title').innerText = score > 10 ? "프로 통제광" : "자연인";
+            if (currentQ >= questions.length) {
+                showResult();
                 return;
             }
-            document.getElementById('question-text').innerText = questions[currentQ].q;
+            let progressPercent = ((currentQ) / questions.length) * 100;
+            document.getElementById('progress').style.width = progressPercent + '%';
+
+            const qObj = questions[currentQ];
+            document.getElementById('question-text').innerText = (currentQ + 1) + ". " + qObj.q;
+            
             const container = document.getElementById('options-container');
             container.innerHTML = '';
-            questions[currentQ].options.forEach(opt => {
+            
+            qObj.options.forEach(opt => {
                 const btn = document.createElement('button');
                 btn.className = 'option-btn';
-                btn.innerText = opt.text;
-                btn.onclick = () => { score += opt.score; currentQ++; loadQ(); };
+                btn.innerText = opt.t;
+                btn.onclick = () => {
+                    totalScore += opt.v;
+                    currentQ++;
+                    loadQ();
+                };
                 container.appendChild(btn);
             });
         }
+
+        function showResult() {
+            document.getElementById('quiz-screen').style.display = 'none';
+            document.getElementById('result-screen').style.display = 'block';
+            
+            let title = "";
+            let desc = "";
+
+            if (totalScore <= 15) {
+                title = "🌿 자유로운 영혼 (자연인 레벨)";
+                desc = "통제력 제로! 바람부는 대로 흐르는 대로 살아가는 자연인 타입입니다. 변수가 생겨도 스트레스를 거의 받지 않으며, 세상 편하게 살아가는 멘탈 갑 소유자네요!";
+            } else if (totalScore <= 30) {
+                title = "⚖️ 밸런스 좋은 합리주의자";
+                desc = "평소에는 유연하고 쿨하게 넘어가지만, 내 기준에 꼭 필요한 선은 지키는 영리한 타입입니다. 피곤하게 통제하려 하지 않고 적당한 효율과 평화를 추구해요.";
+            } else {
+                title = "🚨 뼛속까지 완벽주의 (프로 통제광)";
+                desc = "인생의 모든 변수를 용납하지 않는 최고급 통제광! 주변 사람들과 본인 스스로가 피곤할 수 있지만, 일 처리만큼은 완벽해서 누구도 반박할 수 없는 능력자 스타일입니다.";
+            }
+
+            document.getElementById('result-title').innerText = title;
+            document.getElementById('result-desc').innerText = desc;
+        }
+
         loadQ();
     </script>
 </body>
